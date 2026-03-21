@@ -1,0 +1,105 @@
+# ============================================================
+# config/default_pipeline.yaml
+# Fuente única de verdad para experimentación reproducible
+#
+# Método de matching: PPF + ICP (OpenCV Surface Matching)
+#   Drost et al., "Model Globally, Match Locally", CVPR 2010
+#   https://docs.opencv.org/4.x/d9/d25/group__surface__matching.html
+#
+# Prioridad de resolución:
+#   CLI explícito > YAML > defaults hardcoded del script
+# ============================================================
+
+# --- Sesión (normalmente sobrescrito por CLI) ---
+# session: session_YYYYMMDD_HHMMSS
+# frames: "NN:NNN"
+# side: right
+
+# --- Disparity ---
+disparity:
+  no_clahe: false
+
+# --- Depth ---
+depth:
+  min_disp: 1.0
+  z_min: 0.20
+  z_max: 2.0
+
+# --- Pointcloud ---
+pointcloud:
+  voxel: 0.002
+
+# --- Segmentation ---
+segmentation:
+  use_roi_gt: true
+  roi_sx: 0.30
+  roi_sy: 0.30
+  roi_sz: 0.30
+  voxel: 0.0015
+  remove_planes: 0
+  outliers: statistical
+  estimate_normals: true
+  z_min: 0.15
+  z_max: 2.0
+  min_cluster_size: 200
+
+# --- Matching: PPF + ICP (OpenCV Surface Matching) ---
+#
+# PPF detector (parámetros relativos al diámetro del modelo):
+#   ppf_rel_sampling: submuestreo del modelo.
+#     Valores bajos = modelo más denso, matching más preciso pero lento.
+#   ppf_rel_distance: discretización de distancias de pares.
+#     Más colisiones en hash = estimaciones menos precisas.
+#
+# PPF matching:
+#   ppf_scene_sample_step: fracción de puntos de escena usados.
+#     Menor = más preciso pero más lento.
+#   ppf_scene_distance: distancia relativa de submuestreo de escena.
+#   ppf_top_n: número de hipótesis PPF refinadas con ICP.
+#
+# ICP refinement (cv2.ppf_match_3d_ICP):
+#   icp_iterations: iteraciones máximas.
+#   icp_tolerance: convergencia por desplazamiento mínimo.
+#   icp_rejection_scale: factor de rechazo de outliers.
+#   icp_num_levels: niveles de resolución (multi-resolución).
+#
+matching:
+  # PPF detector
+  ppf_rel_sampling: 0.05
+  ppf_rel_distance: 0.05
+  # PPF matching
+  ppf_scene_sample_step: 0.025
+  ppf_scene_distance: 0.05
+  ppf_top_n: 5
+  # ICP refinement
+  icp_iterations: 100
+  icp_tolerance: 0.005
+  icp_rejection_scale: 2.5
+  icp_num_levels: 4
+  # Scene pre-filtering
+  crop_radius: 0.14
+  crop_min_points: 300
+  view_clamp: true
+  view_near: 0.10
+  view_far: 0.60
+  use_left_camera: true    # DEBE ser true: la nube world_unity se genera desde CameraPoseLeft
+  density: true
+  density_radius: 0.02
+  density_min_p: 5.0
+  density_max_p: 95.0
+  save_subclouds: true
+  allow_full_scene_fallback: false
+
+# --- Pose eval thresholds ---
+pose_eval:
+  ok_trans_m: 0.05
+  ok_rot_deg: 10.0
+  ok_min_fitness: 0.15
+  ok_max_rmse: 0.02
+  ok_min_seg_points: 300
+
+# --- Estabilización temporal de pose ---
+stabilization:
+  ema_alpha: 0.4
+  max_trans_m: 0.15
+  max_rot_deg: 45.0

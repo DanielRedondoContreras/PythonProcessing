@@ -1,0 +1,57 @@
+# ============================================================
+# .gitignore — TFG Visión Artificial / Meta Quest 3
+#
+# Política: se sube solo la estructura de carpetas (con .gitkeep) y todos los archivos que hacen funcionar el repositorio (.py, .js, .yaml, .html, .ps1, .md, .txt).
+# ============================================================
+
+# --- Entorno virtual ---
+.venv/
+
+# --- Python bytecode ---
+__pycache__/
+*.pyc
+*.pyo
+
+# --- IDE / Editor ---
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# --- Datos experimentales (raw, processed, cad) ---
+# Se preserva la estructura de carpetas mediante .gitkeep
+data/raw/*
+!data/raw/.gitkeep
+
+data/processed/*
+!data/processed/.gitkeep
+
+data/cad/*
+!data/cad/.gitkeep
+!data/cad/ppf/
+data/cad/ppf/*
+!data/cad/ppf/.gitkeep
+
+# --- Archivos binarios / generados por el pipeline ---
+*.npy
+*.ply
+*.npz
+*.blend
+*.blend1
+
+# --- Imágenes generadas ---
+*.png
+*.jpg
+*.jpeg
+
+# --- Métricas y resultados intermedios ---
+data/**/*.json
+data/**/*.csv
+data/**/*.jsonl
+
+# --- Logs ---
+*.log
+
+# --- Vendor (librerías embebidas en visuals) ---
+visuals/vendor/
